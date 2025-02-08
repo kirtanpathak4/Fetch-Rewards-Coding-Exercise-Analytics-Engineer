@@ -1,0 +1,12 @@
+For this exercise, I got the JSON data but the format and data quality was not appropriate. I converted the data to .sql with some online tools. I loaded to SQLite3 database and then used sql script to do basic normalization. Since the data had large unusual JSON fields, it would've taken more time to deeply normalize that and it should've been done before that. But basic understanding would be to split the tables more to get broader view. (mydb, NormalizationConversionscript, ER-diagram)
+
+Then with that database, I ran queries for the questions asked, and did more than 2. (sql-queries, SQLAnswer1-2-3-4)
+
+Then with the Python script to find out data quality issues in the data and got the printed statements of the answers in txt file. (dataqaulityissue.py, DataQualityIssues)
+
+Finally the draft of email for the product or business leader. (Email word file)
+
+Note: I might have used AI tools for brainstorming, creating diagrams and code snippets.
+
+
+

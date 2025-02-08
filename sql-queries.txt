@@ -1,0 +1,123 @@
+
+1) When considering average spend from receipts with 'rewardsReceiptStatus’ of ‘Accepted’ or ‘Rejected’, which is greater?
+
+SELECT 
+    rewardsReceiptStatus, 
+    AVG(CAST(totalSpent AS REAL)) AS average_spend
+FROM receipts
+WHERE rewardsReceiptStatus IN ('FINISHED', 'REJECTED')
+GROUP BY rewardsReceiptStatus
+ORDER BY average_spend DESC;
+
+
+
+2) When considering total number of items purchased from receipts with 'rewardsReceiptStatus’ of ‘Accepted’ or ‘Rejected’, which is greater?
+
+
+SELECT 
+    rewardsReceiptStatus, 
+    SUM(purchasedItemCount) AS total_items_purchased
+FROM receipts
+WHERE rewardsReceiptStatus IN ('FINISHED', 'REJECTED')
+GROUP BY rewardsReceiptStatus
+ORDER BY total_items_purchased DESC;
+
+
+
+3) What are the top 5 brands by receipts scanned for most recent month?
+
+
+SELECT
+    b.name AS brand_name,
+    COUNT(DISTINCT r._id) AS receipt_count
+FROM receipts AS r
+JOIN receipt_items AS ri ON r._id = ri.receipt_id
+JOIN brands AS b ON ri.barcode = b.barcode
+GROUP BY
+    brand_name
+ORDER BY
+    receipt_count DESC
+LIMIT 5;
+
+
+
+4)How does the ranking of the top 5 brands by receipts scanned for the recent month compare to the ranking for the previous month?
+
+
+WITH
+  RankedBrands AS (
+    SELECT
+      STRFTIME('%Y-%m', DATE(r.dateScanned / 1000, 'unixepoch')) AS scan_month,
+      b.name AS brand_name,
+      COUNT(DISTINCT r._id) AS receipt_count,
+      RANK() OVER (
+        PARTITION BY
+          STRFTIME('%Y-%m', DATE(r.dateScanned / 1000, 'unixepoch'))
+        ORDER BY
+          COUNT(DISTINCT r._id) DESC
+      ) AS ranking
+    FROM receipts AS r
+    JOIN receipt_items AS ri
+      ON r._id = ri.receipt_id
+    JOIN brands AS b
+      ON ri.barcode = b.barcode
+    GROUP BY
+      1,
+      2
+  ),
+  RecentMonth AS (
+    SELECT
+      scan_month,
+      brand_name,
+      receipt_count,
+      ranking
+    FROM RankedBrands
+    WHERE
+      scan_month = (
+        SELECT
+          MAX(scan_month)
+        FROM RankedBrands
+      )
+      AND ranking <= 5
+  ),
+  PreviousMonth AS (
+    SELECT
+      scan_month,
+      brand_name,
+      receipt_count,
+      ranking
+    FROM RankedBrands
+    WHERE
+      scan_month = (
+        SELECT
+          MAX(scan_month)
+        FROM RankedBrands
+        WHERE
+          scan_month < (
+            SELECT
+              MAX(scan_month)
+            FROM RankedBrands
+          )
+      )
+      AND ranking <= 5
+  )
+SELECT
+  'Recent' AS MonthType,
+  scan_month,
+  brand_name,
+  receipt_count,
+  ranking
+FROM RecentMonth
+UNION ALL
+SELECT
+  'Previous' AS MonthType,
+  scan_month,
+  brand_name,
+  receipt_count,
+  ranking
+FROM PreviousMonth
+ORDER BY
+  scan_month DESC,
+  ranking ASC;
+
+  

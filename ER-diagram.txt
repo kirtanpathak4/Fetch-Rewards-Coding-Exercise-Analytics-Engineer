@@ -1,0 +1,21 @@
+Here are the key points about the relationships:
+
+Users to Receipts (1:Many)
+One user can have multiple receipts
+Connected through the userId field in receipts table
+
+
+Receipts to Receipt Items (1:Many)
+One receipt can have multiple receipt items
+Connected through the receipt_id foreign key in receipt_items table
+
+
+Brands to Receipt Items (1:Many)
+One brand can be referenced by multiple receipt items
+Connected through the barcode field (implied relationship)
+
+The diagram uses the following notation:
+PK: Primary Key
+FK: Foreign Key
+||--o{: One-to-many relationship
+Attributes are listed within each entity

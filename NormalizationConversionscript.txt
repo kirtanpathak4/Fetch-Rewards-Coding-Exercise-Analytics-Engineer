@@ -1,0 +1,108 @@
+-- Create the new receipts table
+CREATE TABLE receipts_normalized (
+    _id TEXT PRIMARY KEY,
+    bonusPointsEarned BIGINT,
+    bonusPointsEarnedReason TEXT,
+    createDate BIGINT,
+    dateScanned BIGINT,
+    finishedDate BIGINT,
+    modifyDate BIGINT,
+    pointsAwardedDate BIGINT,
+    pointsEarned TEXT,
+    purchaseDate BIGINT,
+    purchasedItemCount BIGINT,
+    rewardsReceiptStatus TEXT,
+    totalSpent TEXT,
+    userId TEXT
+);
+
+-- Create the receipt_items table
+CREATE TABLE receipt_items (
+    item_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    receipt_id TEXT,
+    barcode TEXT,
+    description TEXT,
+    finalPrice TEXT,
+    itemPrice TEXT,
+    needsFetchReview BOOLEAN,
+    needsFetchReviewReason TEXT,
+    partnerItemId TEXT,
+    preventTargetGapPoints BOOLEAN,
+    quantityPurchased INTEGER,
+    userFlaggedBarcode TEXT,
+    userFlaggedNewItem BOOLEAN,
+    userFlaggedPrice TEXT,
+    userFlaggedQuantity INTEGER,
+    discountedItemPrice TEXT,
+    originalReceiptItemText TEXT,
+    itemNumber TEXT,
+    originalMetaBriteBarcode TEXT,
+    originalMetaBriteDescription TEXT,
+    pointsNotAwardedReason TEXT,
+    pointsPayerId TEXT,
+    rewardsGroup TEXT,
+    rewardsProductPartnerId TEXT,
+    competitiveProduct BOOLEAN,
+    pointsEarned TEXT,
+    targetPrice TEXT,
+    originalMetaBriteQuantityPurchased INTEGER,
+    FOREIGN KEY (receipt_id) REFERENCES receipts_normalized(_id)
+);
+
+-- Copy data from the original receipts table to the new receipts_normalized table
+INSERT INTO receipts_normalized (
+    _id, bonusPointsEarned, bonusPointsEarnedReason, createDate, dateScanned,
+    finishedDate, modifyDate, pointsAwardedDate, pointsEarned, purchaseDate,
+    purchasedItemCount, rewardsReceiptStatus, totalSpent, userId
+)
+SELECT
+    _id, bonusPointsEarned, bonusPointsEarnedReason, createDate, dateScanned,
+    finishedDate, modifyDate, pointsAwardedDate, pointsEarned, purchaseDate,
+    purchasedItemCount, rewardsReceiptStatus, totalSpent, userId
+FROM receipts;
+
+-- Extract data from the JSON and insert into receipt_items table
+INSERT INTO receipt_items (
+    receipt_id, barcode, description, finalPrice, itemPrice, needsFetchReview,
+    needsFetchReviewReason, partnerItemId, preventTargetGapPoints, quantityPurchased,
+    userFlaggedBarcode, userFlaggedNewItem, userFlaggedPrice, userFlaggedQuantity,
+    discountedItemPrice, originalReceiptItemText, itemNumber, originalMetaBriteBarcode,
+    originalMetaBriteDescription, pointsNotAwardedReason, pointsPayerId, rewardsGroup,
+    rewardsProductPartnerId, competitiveProduct, pointsEarned, targetPrice, originalMetaBriteQuantityPurchased
+)
+SELECT
+    r._id,
+    JSON_EXTRACT(item.value, '$.barcode'),
+    JSON_EXTRACT(item.value, '$.description'),
+    JSON_EXTRACT(item.value, '$.finalPrice'),
+    JSON_EXTRACT(item.value, '$.itemPrice'),
+    CASE WHEN JSON_EXTRACT(item.value, '$.needsFetchReview') = 'true' THEN 1 WHEN JSON_EXTRACT(item.value, '$.needsFetchReview') = 'false' THEN 0 ELSE NULL END,
+    JSON_EXTRACT(item.value, '$.needsFetchReviewReason'),
+    JSON_EXTRACT(item.value, '$.partnerItemId'),
+    CASE WHEN JSON_EXTRACT(item.value, '$.preventTargetGapPoints') = 'true' THEN 1 WHEN JSON_EXTRACT(item.value, '$.preventTargetGapPoints') = 'false' THEN 0 ELSE NULL END,
+    JSON_EXTRACT(item.value, '$.quantityPurchased'),
+    JSON_EXTRACT(item.value, '$.userFlaggedBarcode'),
+    CASE WHEN JSON_EXTRACT(item.value, '$.userFlaggedNewItem') = 'true' THEN 1 WHEN JSON_EXTRACT(item.value, '$.userFlaggedNewItem') = 'false' THEN 0 ELSE NULL END,
+    JSON_EXTRACT(item.value, '$.userFlaggedPrice'),
+    JSON_EXTRACT(item.value, '$.userFlaggedQuantity'),
+    JSON_EXTRACT(item.value, '$.discountedItemPrice'),
+    JSON_EXTRACT(item.value, '$.originalReceiptItemText'),
+    JSON_EXTRACT(item.value, '$.itemNumber'),
+    JSON_EXTRACT(item.value, '$.originalMetaBriteBarcode'),
+    JSON_EXTRACT(item.value, '$.originalMetaBriteDescription'),
+    JSON_EXTRACT(item.value, '$.pointsNotAwardedReason'),
+    JSON_EXTRACT(item.value, '$.pointsPayerId'),
+    JSON_EXTRACT(item.value, '$.rewardsGroup'),
+    JSON_EXTRACT(item.value, '$.rewardsProductPartnerId'),
+  CASE WHEN JSON_EXTRACT(item.value, '$.competitiveProduct') = 'true' THEN 1 WHEN JSON_EXTRACT(item.value, '$.competitiveProduct') = 'false' THEN 0 ELSE NULL END,
+    JSON_EXTRACT(item.value, '$.pointsEarned'),
+    JSON_EXTRACT(item.value, '$.targetPrice'),
+    JSON_EXTRACT(item.value, '$.originalMetaBriteQuantityPurchased')
+FROM receipts r
+CROSS JOIN JSON_EACH(r.rewardsReceiptItemList) AS item;
+
+-- Drop the original receipts table
+DROP TABLE receipts;
+
+-- Rename the new receipts table to the original name
+ALTER TABLE receipts_normalized RENAME TO receipts;

@@ -1,0 +1,74 @@
+Checking for null values in primary keys...
+Table: users | Total Rows: 495 | Null _id Values: 0
+Table: receipts | Total Rows: 1119 | Null _id Values: 0
+Table: brands | Total Rows: 1167 | Null _id Values: 0
+
+Checking for invalid userId references...
+Invalid userId references in receipts: 148
+
+Checking for non-numeric values in pointsEarned and totalSpent...
+Non-numeric values in pointsEarned: 600
+Non-numeric values in totalSpent: 0
+
+Checking for invalid date ranges...
+Invalid purchaseDate values: 671
+
+Checking for boolean inconsistencies...
+Invalid values in users.active: []
+Invalid values in brands.topBrand: []
+
+Checking for duplicate _id values...
+Duplicate _id values in users: 70
+Duplicate _id values in receipts: 0
+Duplicate _id values in brands: 0
+
+Checking for empty strings in key text fields...
+Empty strings in users.role: 0
+Empty strings in users.signUpSource: 0
+Empty strings in users.state: 0
+Empty strings in receipts.bonusPointsEarnedReason: 0
+Empty strings in receipts.rewardsReceiptStatus: 0
+Empty strings in brands.name: 0
+Empty strings in brands.category: 0
+
+Checking for outliers in numeric fields...
+Outliers in receipts.bonusPointsEarned - Max: 750.0, Min: 5.0
+Outliers in receipts.purchasedItemCount - Max: 689.0, Min: 0.0
+Outliers in receipts.totalSpent - Max: 4721.95, Min: 0.0
+
+Checking for inconsistent casing in categorical fields...
+Inconsistent casing in users.role: ['consumer', 'fetch-staff']
+Inconsistent casing in users.state: ['AL', 'CO', 'IL', 'KY', 'NH', 'OH', 'SC', 'WI']
+Inconsistent casing in brands.category: ['Baby', 'Baking', 'Beauty', 'Beauty & Personal Care', 'Beer Wine Spirits', 'Beverages', 'Bread & Bakery', 'Breakfast & Cereal', 'Candy & Sweets', 'Canned Goods & Soups', 'Cleaning & Home Improvement', 'Condiments & Sauces', 'Dairy', 'Dairy & Refrigerated', 'Deli', 'Frozen', 'Grocery', 'Health & Wellness', 'Household', 'Magazines', 'Outdoor', 'Personal Care', 'Snacks']
+
+Checking for unusual characters in text fields...
+Unusual characters in users.role: 0
+Unusual characters in users.signUpSource: 0
+Inconsistent casing in users.role: ['consumer', 'fetch-staff']
+Inconsistent casing in users.state: ['AL', 'CO', 'IL', 'KY', 'NH', 'OH', 'SC', 'WI']
+Inconsistent casing in brands.category: ['Baby', 'Baking', 'Beauty', 'Beauty & Personal Care', 'Beer Wine Spirits', 'Beverages', 'Bread & Bakery', 'Breakfast & Cereal', 'Candy & Sweets', 'Canned Goods & Soups', 'Cleaning & Home Improvement', 'Condiments & Sauces', 'Dairy', 'Dairy & Refrigerated', 'Deli', 'Frozen', 'Grocery', 'Health & Wellness', 'Household', 'Magazines', 'Outdoor', 'Personal Care', 'Snacks']
+
+Checking for unusual characters in text fields...
+Unusual characters in users.role: 0
+Unusual characters in users.signUpSource: 0
+Inconsistent casing in brands.category: ['Baby', 'Baking', 'Beauty', 'Beauty & Personal Care', 'Beer Wine Spirits', 'Beverages', 'Bread & Bakery', 'Breakfast & Cereal', 'Candy & Sweets', 'Canned Goods & Soups', 'Cleaning & Home Improvement', 'Condiments & Sauces', 'Dairy', 'Dairy & Refrigerated', 'Deli', 'Frozen', 'Grocery', 'Health & Wellness', 'Household', 'Magazines', 'Outdoor', 'Personal Care', 'Snacks']
+
+Checking for unusual characters in text fields...
+Unusual characters in users.role: 0
+Unusual characters in users.signUpSource: 0
+rozen', 'Grocery', 'Health & Wellness', 'Household', 'Magazines', 'Outdoor', 'Personal Care', 'Snacks']
+
+Checking for unusual characters in text fields...
+Unusual characters in users.role: 0
+Unusual characters in users.signUpSource: 0
+Checking for unusual characters in text fields...
+Unusual characters in users.role: 0
+Unusual characters in users.signUpSource: 0
+Unusual characters in users.role: 0
+Unusual characters in users.signUpSource: 0
+Unusual characters in users.signUpSource: 0
+Unusual characters in users.state: 0
+Unusual characters in receipts.bonusPointsEarnedReason: 361
+Unusual characters in receipts.rewardsReceiptStatus: 0
+Unusual characters in brands.name: 463
+Unusual characters in brands.category: 216
